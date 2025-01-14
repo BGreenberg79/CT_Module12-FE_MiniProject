@@ -48,6 +48,7 @@ const UserList = () => {
                 <ListGroup.Item variant='info' key={user.id}>
                     Name: {user.name.firstname} {user.name.lastname}<br />
                     Username: {user.username}<br />
+                    Password: {user.password}<br />
                     Email: {user.email}<br />
                     Phone: {user.phone}<br />
                     <Button variant='danger' className='shadow-sm m-1 p-1' onClick={() => handleDeleteUser(user.id)}>Delete</Button>

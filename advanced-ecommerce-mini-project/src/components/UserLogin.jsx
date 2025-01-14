@@ -1,21 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useNavigate } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import axios from 'axios';
 
 const UserLogin = () => {
+    const navigate = useNavigate();
     const [loginUser, setLoginUser] = useState({
         email: '',
         password: ''
     });
+
     const loginAPI = async (loginUser) => {
+        // API Request authenticates user 
         const response = await axios.post('https://fakestoreapi.com/auth/login',
             {email: loginUser.email,
             password: loginUser.password})
+
+            // returning the response.data will provide the token we needto save to session storage 
             return response.data;}
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        loginAPI(loginUser);
+
+        const responseData = await loginAPI(loginUser);
+
+        if (responseData && responseData.token) {
+            sessionStorage.setItem('authenicationToken', responseData.token);
+            sessionStorage.setItem('userData', JSON.stringify(responseData)); //stores all of user's data
+            navigate('/product-catalog');
+        }
     }
 
   return (
