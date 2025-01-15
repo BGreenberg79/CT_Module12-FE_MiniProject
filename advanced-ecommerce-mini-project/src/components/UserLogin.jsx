@@ -1,6 +1,7 @@
-import React, { useState, useNavigate } from 'react';
+import React, { useState } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const UserLogin = () => {
     const navigate = useNavigate();
