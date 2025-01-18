@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { Container, ListGroup, Dropdown, Card, Button } from 'react-bootstrap'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import { Container, ListGroup, Dropdown, Card, Button, Form } from 'react-bootstrap'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../redux/cartSlice';
 
 
 
@@ -14,9 +15,13 @@ const ProductCatalog = () => {
   // allows me to filter by category once selected in the bootstrap dropdown menu
   const [sorting, setSorting] = useState('asc')
   // Fake Store API defaults to ascending sorting
-  const navigate = useNavigate();
+  const [searchBar, setSearchBar] = useState('');
+  // state for search by product name
+  const [priceMaxOrMin, setPriceMaxOrMin] = useState('max');
+  const [priceSearchBar, setPriceSearchBar] = useState('');
 
-  const {addToCart} = useCart();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loginToken = sessionStorage.getItem('authenticationToken');
@@ -52,16 +57,43 @@ const ProductCatalog = () => {
     }
   };
 
-  const handleCategorySelect = (category) =>{
+  const handleCategorySelect = useCallback((category) =>{
     setSelectedCategory(category);
-  }
+  }, []);
 
-  const handleSorting = (order) => {
-    setSorting(order)
-  }
+  const handleSorting = useCallback((order) => {
+    setSorting(order);
+  }, []);
+  
+  const handleSearch = useCallback((event) => {
+    setSearchBar(event.target.value);
+  }, []);
+
+  const handlePriceMaxMin = useCallback((event) => {
+    setPriceMaxOrMin(event.target.value);
+  }, []);
+
+  const handlePriceSearch = useCallback((event) => {
+    setPriceSearchBar(event.target.value);
+  }, []);
+
+  // Added useCallback to memoize the functions for each event listener to minimize rerendering
 
 
-  const filteredProducts = selectedCategory ? products.filter((product) => product.category === selectedCategory) : products;
+
+  const filteredProducts = useMemo(products.filter((product) => {
+    const titleMatch = product.title.toLowerCase().includes(searchBar.toLowerCase());
+    const categoryMatch = selectedCategory === '' || product.category === selectedCategory;
+    let priceMatch = true
+    if (priceSearchBar) {
+      if (priceMaxOrMin === 'max') {
+        priceMatch = product.price <= priceSearchBar;}
+      else {
+        priceMatch = product.price >= priceSearchBar;}}
+    return titleMatch && categoryMatch && priceMatch;
+  }), [products, searchBar, priceSearchBar, priceMaxOrMin, selectedCategory]);
+
+  // Added useMemo to memoize the filteredProducts array to minimize rerendering
 
   return (
     <Container>
@@ -92,6 +124,34 @@ const ProductCatalog = () => {
           ))}
         </Dropdown.Menu>
       </Dropdown>
+      <Form>
+        <Form.Group className="my-2">
+          <Form.Label>Search By Item</Form.Label>
+          <Form.Control
+          type="text" 
+          placeholder="Search by item name" 
+          value={searchBar} 
+          onChange={handleSearch}/>
+        </Form.Group>
+        <Form.Group className="my-2">
+          <Form.Label>Price Search</Form.Label>
+          <Form.Control
+          type="number" 
+          placeholder="Enter price" 
+          value={priceSearchBar} 
+          onChange={handlePriceSearch}/>
+
+        <Dropdown>
+          <Dropdown.Toggle variant="success" id="dropdown-basic">
+            {priceMaxOrMin === 'max' ? 'Maximum Price' : 'Minimum Price'}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={() => handlePriceMaxMin('max')}>Maximum Price</Dropdown.Item>
+            <Dropdown.Item onClick={() => handlePriceMaxMin('min')}>Minimum Price</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+        </Form.Group>
+      </Form>
       {/* Map through products */}
       <ListGroup>
         {filteredProducts.map((product) => (
@@ -103,7 +163,8 @@ const ProductCatalog = () => {
                 Category: {product.category}<br />
                 Price: ${product.price}<br />
                 Description: {product.description}
-                <Button variant='success' onClick={() => addToCart(product)}>Add To Cart</Button>
+                <Button variant='success' onClick={() => dispatch(addToCart(product))}>Add To Cart</Button>
+                {/* disptch addToCart reducer on click of add to cart button */}
               </Card.Text>
             </Card.Body>
           </Card>

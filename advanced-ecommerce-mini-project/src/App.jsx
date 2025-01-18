@@ -1,11 +1,16 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
-import CreateUser from './components/CreateUser' 
-import { CartProvider } from './context/CartContext'
+import CreateUser from './components/CreateUser'
+import UserLogin from './components/UserLogin'
+import UpdateUser from './components/UpdateUser'
+import UserList from './components/UserList'
+import ProductCatalog from './components/ProductCatalog' 
+import { Provider } from 'react-redux'
+import store from './redux/store'
 
 const App = () => {
   return (
-    <CartProvider>
+    <Provider store={store}>
     <Routes>
       <Route path="/create-user" element={<CreateUser />} />
       <Route path='/login' element={<UserLogin />} />
@@ -13,7 +18,7 @@ const App = () => {
       <Route path='/users' element={<UserList />} />
       <Route path='/product-catalog' element={<ProductCatalog />} />
     </Routes>
-    </CartProvider>
+    </Provider>
 
   )
 }
