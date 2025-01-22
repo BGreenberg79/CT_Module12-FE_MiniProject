@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import { Container, ListGroup, Card, Button, Modal } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { addToCart, removeFromCart, clearCart } from '../redux/cartSlice'
@@ -17,11 +17,23 @@ const ShoppingCart = () => {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [products, setProducts] = useState({});
 
-    const fetchProductsForPrice = async (productId) => {
+// useCallback to optimize performance by memoizing the fetchProductsForPrice function
+    const fetchProductsForPrice = useCallback(async (productId) => {
+        // Check for product data already cached in local storage  
+        const cachedProduct = localStorage.getItem(`product-${productId}`);
+        if (cachedProduct) {
+            setProducts((prevProducts) => ({
+                ...prevProducts,
+                [productId]: JSON.parse(cachedProduct),
+            }));
+            return;
+        } 
+
         if (!products[productId]) { //prevent fetching the same product multiple times
         try {
             const response = await axios.get(`https://fakestoreapi.com/products/${productId}`);
             const productData = response.data;
+            localStorage.setItem(`product-${productId}`, JSON.stringify(productData)); // cache product data in local storage
             setProducts((prevProducts) => ({
                 ...prevProducts,
                 [productId]: productData,
@@ -30,12 +42,18 @@ const ShoppingCart = () => {
                 console.error('Error fetching product details:', error);
             }
         }
-    };
+    });
 
 
     // Fetch order history from FakeStoreAPI
-    useEffect(() => {
-        const fetchOrderHistory = async () => {
+        const fetchOrderHistory = useCallback(async () => {
+            // Check for cached order history in local storage
+            const cachedOrderHistory = localStorage.getItem('orderHistory');
+            if (cachedOrderHistory) {
+                setOrderHistory(JSON.parse(cachedOrderHistory));
+                return;
+            }
+        
             try {
                 const response = await axios.get('https://fakestoreapi.com/carts');
 
@@ -57,16 +75,20 @@ const ShoppingCart = () => {
                         totalPrice: priceCalculation,
                     };
                 })
+// cache order history in local storage
+                localStorage.setItem('orderHistory', JSON.stringify(responseWithPrice));
                 setOrderHistory(responseWithPrice);
 
             } catch (error) {
                 console.error(error);
             }
-        };
-        fetchOrderHistory();
-    }, []);
+    }, [fetchProductsForPrice]);
 
-    const calculateTotalPrice = (orderProducts) => {
+    useEffect(() => {
+        fetchOrderHistory();;
+    }, [fetchOrderHistory]);
+// memoize totalprice of each order in history
+    const calculateTotalPrice = useMemo((orderProducts) => {
         return orderProducts.reduce((total, item) => {
             const product = products[item.productId];
             if (!product) {
@@ -74,7 +96,7 @@ const ShoppingCart = () => {
             }
             return total + (product.price * item.quantity);
         }, 0);
-    };
+    }, [products]);
 
     // Check for login and user data
     useEffect(() => {
@@ -86,13 +108,14 @@ const ShoppingCart = () => {
         }
     }, [navigate]);
 
-    const handlePriceTotal = () => {
+    // memoize total price of all items in active user cart
+    const handlePriceTotal = useMemo(() => {
         return cart.reduce((total, product) => total + (product.price * product.quantity), 0)
-    }
-
-    const handleTotalItems = () => {
+    }, [cart]);
+// memoize total number of items in active user cart
+    const handleTotalItems = useMemo(() => {
         return cart.reduce((total, product) => total + product.quantity, 0)
-    }
+    }, [cart]);
 
     const handleCheckout = async () => {
         // Fetch data from sessionStorage
@@ -146,6 +169,7 @@ const ShoppingCart = () => {
     return (
         <Container>
             <h1>Shopping Cart</h1>
+            <section>
             <ListGroup>
                 {cart.length === 0 ? (
                     <h2>Your cart is empty</h2>
@@ -153,16 +177,24 @@ const ShoppingCart = () => {
                     cart.map((product) => (
                         <ListGroup.Item key={product.id}>
                             <Card>
-                                <Card.Img variant='top' src={product.image} />
+                                <Card.Img variant='top' src={product.image} alt={`image of ${product.title}`}/> {/*Added alt text for screen reader*/}
                                 <Card.Body>
                                     <Card.Title>{product.title}</Card.Title>
                                     <Card.Text>
                                         Price: ${product.price}<br />
                                         Description: {product.description}
                                         Quantity: {product.quantity}<br />
-                                        <Button variant='success' onClick={() => dispatch(addToCart(product))}>Add Additional</Button>
+                                        <Button 
+                                        variant='success' 
+                                        onClick={() => dispatch(addToCart(product))}
+                                        aria-label={`Add additional ${product.title} to cart`}>
+                                        Add Additional</Button>
                                         {/* dispatches addToCart reducer from cartSlice */}
-                                        <Button variant='danger' onClick={() => dispatch(removeFromCart(product))}>Remove</Button>
+                                        <Button 
+                                        variant='danger' 
+                                        onClick={() => dispatch(removeFromCart(product))}
+                                        aria-label={`Remove ${product.title} from cart`}>
+                                        Remove</Button>
                                         {/* dispatches removeFromCart reducer from cartSlice */}
                                     </Card.Text>
                                 </Card.Body>
@@ -171,11 +203,23 @@ const ShoppingCart = () => {
             </ListGroup>
             <p>Total Number of Items in Cart: {handleTotalItems()}</p>
             <p>Total Price: {handlePriceTotal()}</p>
-            <Button variant='danger' onClick={() => dispatch(clearCart())}>Clear Cart</Button>
-            <Button variant='success' onClick={handleCheckout}>Checkout</Button>
-            <Modal show={showCheckoutNotfication} onHide={handleCloseNotification}>
+            <Button 
+            variant='danger' 
+            onClick={() => dispatch(clearCart())}
+            aria-label='clear all items in cart'
+            >Clear Cart</Button>
+            <Button 
+            variant='success' 
+            onClick={handleCheckout}
+            aria-label='initiate checkout'
+            >Checkout</Button>
+            <Modal 
+            show={showCheckoutNotfication} 
+            onHide={handleCloseNotification}
+            aria-labelledby='checkout completed'
+            >
                 <Modal.Header closeButton>
-                    <Modal.Title>Checkout Completed</Modal.Title>
+                    <Modal.Title id='checkoutNotification'>Checkout Completed</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>You have successfully checked out!</Modal.Body>
                 <Modal.Footer>
@@ -184,7 +228,9 @@ const ShoppingCart = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-
+            </section>
+            
+            <section>
             <h2>Order History</h2>
             <ListGroup>
                 {orderHistory.map((order) => (
@@ -197,7 +243,11 @@ const ShoppingCart = () => {
                                         Date Created: {new Date(order.date).toLocaleDateString()}<br />
                                         {/* Uses local date string to support internationalization instead of raw date */}
                                         Total Price: ${order.totalPrice}<br />
-                                        <Button variant='success' onClick={() => handleShowOrderDetails(order.id)}>Show Product Details</Button>
+                                        <Button 
+                                        variant='success' 
+                                        onClick={() => handleShowOrderDetails(order.id)}
+                                        aria-label={`view details for order ${order.id}`}
+                                        >Show Product Details</Button>
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
@@ -205,9 +255,13 @@ const ShoppingCart = () => {
                 ))}
             </ListGroup>
             {/* Modal to show details of a selected order */}
-            <Modal show={selectedOrder !== null} onHide={handleCloseOrderDetails}>
+            <Modal 
+            show={selectedOrder !== null} 
+            onHide={handleCloseOrderDetails}
+            aria-labelledby='order details'
+            >
                 <Modal.Header closeButton>
-                    <Modal.Title>Order Details</Modal.Title>
+                    <Modal.Title id='orderDetails'>Order Details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     Order ID: {selectedOrder.id} <br />
@@ -231,7 +285,7 @@ const ShoppingCart = () => {
                 </Modal.Footer>
             </Modal>
 
-
+            </section>
         </Container>
     )
 }

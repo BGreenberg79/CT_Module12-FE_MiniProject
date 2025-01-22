@@ -59,7 +59,10 @@ const CreateUser = () => {
 
     return (
         <Container>
+            <header>
             <h1>New User</h1>
+            </header>
+            <section>
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mx-1 my-2" controlId='email'>
                     <Form.Label>Email:</Form.Label>
@@ -70,6 +73,8 @@ const CreateUser = () => {
                             setUser({ ...user, email: event.target.value })
                         }
                         value={user.email}
+                        required
+                        aria-label='email address'
                     />
                 </Form.Group>
                 <Form.Group className="mx-1 my-2" controlId='username'>
@@ -81,6 +86,8 @@ const CreateUser = () => {
                             setUser({ ...user, username: event.target.value })
                         }
                         value={user.username}
+                        required
+                        aria-label='username'
                     />
                 </Form.Group>
                 <Form.Group className="mx-1 my-2" controlId='password'>
@@ -92,6 +99,8 @@ const CreateUser = () => {
                             setUser({ ...user, password: event.target.value })
                         }
                         value={user.password}
+                        required
+                        aria-label='password'
                     />
                 </Form.Group>
                 <Form.Group className="mx-1 my-2" controlId='firstName'>
@@ -103,6 +112,8 @@ const CreateUser = () => {
                             setUser({ ...user, firstname: event.target.value })
                         }
                         value={user.name.firstname}
+                        required
+                        aria-label='first name'
                     />
                 </Form.Group>
                 <Form.Group className="mx-1 my-2" controlId='lastName'>
@@ -114,6 +125,8 @@ const CreateUser = () => {
                             setUser({ ...user, lastname: event.target.value })
                         }
                         value={user.name.lastname}
+                        required
+                        aria-label='last name'
                     />
                 </Form.Group>
                 <Container className='border border-info rounded p-1 m-1'>
@@ -127,6 +140,8 @@ const CreateUser = () => {
                                 setUser({ ...user, city: event.target.value })
                             }
                             value={user.address.city}
+                            required
+                            aria-label='city'
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='street'>
@@ -138,6 +153,8 @@ const CreateUser = () => {
                                 setUser({ ...user, street: event.target.value })
                             }
                             value={user.address.street}
+                            required
+                            aria-label='street name'
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='number'>
@@ -149,6 +166,8 @@ const CreateUser = () => {
                                 setUser({ ...user, number: event.target.value })
                             }
                             value={user.address.number}
+                            required
+                            aria-label='building number'
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='zipCode'>
@@ -160,6 +179,8 @@ const CreateUser = () => {
                                 setUser({ ...user, zipcode: event.target.value })
                             }
                             value={user.address.zipcode}
+                            required
+                            aria-label='zip code'
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='lat'>
@@ -171,6 +192,8 @@ const CreateUser = () => {
                                 setUser({ ...user, lat: event.target.value })
                             }
                             value={user.address.geolocation.lat}
+                            required
+                            aria-label='latitude'
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='long'>
@@ -182,6 +205,8 @@ const CreateUser = () => {
                                 setUser({ ...user, long: event.target.value })
                             }
                             value={user.address.geolocation.long}
+                            required
+                            aria-label='longitude'
                         />
                     </Form.Group>
                 </Container>
@@ -194,12 +219,18 @@ const CreateUser = () => {
                             setUser({ ...user, phone: event.target.value })
                         }
                         value={user.phone}
+                        required
+                        aria-label='phone number'
                     />
                 </Form.Group>
-                <Button variant="success" type="submit">
+                <Button 
+                variant="success" 
+                type="submit"
+                aria-label='create new user account'>
                     Create User
                 </Button>
             </Form>
+            </section>
         </Container>
     )
 }

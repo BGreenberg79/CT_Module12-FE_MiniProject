@@ -97,41 +97,62 @@ const ProductCatalog = () => {
 
   return (
     <Container>
+      <header>
       <h1>Product Catalog</h1>
+      </header>
 
       {/* Dropdown to set sorting by price */}
+      <section>
       <Dropdown>
-        <Dropdown.Toggle variant="success" id="dropdown-basic">
+        <Dropdown.Toggle 
+        variant="success" 
+        id="dropdownPriceSort"
+        aria-label='sort by price'
+        >
           Sort By Price
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
-          <Dropdown.Item onClick={() => handleSorting('asc')}>Ascending</Dropdown.Item>
-          <Dropdown.Item onClick={() => handleSorting('desc')}>Descending</Dropdown.Item>
+          <Dropdown.Item 
+          onClick={() => handleSorting('asc')}
+          aria-label='sort ascending'
+          >Ascending</Dropdown.Item>
+          <Dropdown.Item 
+          onClick={() => handleSorting('desc')}
+          aria-label='sort descending'
+          >Descending</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
 
       {/* Dropdown list to select and filter by category*/}
       <Dropdown>
-        <Dropdown.Toggle variant="success" id="dropdown-basic">
+        <Dropdown.Toggle 
+        variant="success" 
+        id="dropdownSelectCategory"
+        aria-label='select product category'
+        >
           Select Category
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
           {categories.map((category) => (
-            <Dropdown.Item key={category} 
-            onClick={() => handleCategorySelect(category)}>{category}</Dropdown.Item>
+            <Dropdown.Item 
+            key={category} 
+            onClick={() => handleCategorySelect(category)}
+            aria-label={`filter by ${category} category`}>{category}</Dropdown.Item>
           ))}
         </Dropdown.Menu>
       </Dropdown>
       <Form>
-        <Form.Group className="my-2">
+        <Form.Group className="my-2" controlId="searchByItem">
           <Form.Label>Search By Item</Form.Label>
           <Form.Control
           type="text" 
           placeholder="Search by item name" 
           value={searchBar} 
-          onChange={handleSearch}/>
+          onChange={handleSearch}
+          aria-label='search by item name'
+          />
         </Form.Group>
         <Form.Group className="my-2">
           <Form.Label>Price Search</Form.Label>
@@ -139,37 +160,57 @@ const ProductCatalog = () => {
           type="number" 
           placeholder="Enter price" 
           value={priceSearchBar} 
-          onChange={handlePriceSearch}/>
+          onChange={handlePriceSearch}     
+          aria-label='search by item price'
+          />
 
         <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
+          <Dropdown.Toggle 
+          variant="success" 
+          id="dropdownPriceFilter"
+          aria-label='filter by price maximum or minimum'
+          >
             {priceMaxOrMin === 'max' ? 'Maximum Price' : 'Minimum Price'}
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item onClick={() => handlePriceMaxMin('max')}>Maximum Price</Dropdown.Item>
-            <Dropdown.Item onClick={() => handlePriceMaxMin('min')}>Minimum Price</Dropdown.Item>
+            <Dropdown.Item 
+            onClick={() => handlePriceMaxMin('max')}
+            aria-label='filter by maximum price'>Maximum Price</Dropdown.Item>
+            <Dropdown.Item 
+            onClick={() => handlePriceMaxMin('min')}
+            aria-label='filter by minimum price'>Minimum Price</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
         </Form.Group>
       </Form>
+      </section>
       {/* Map through products */}
+      <section>
       <ListGroup>
         {filteredProducts.map((product) => (
           <Card variant='info' key={product.id}>
-            <Card.Img variant="top" src={product.image}/>
+            <Card.Img 
+            variant="top" 
+            src={product.image}
+            alt={`image of ${product.title}`}
+            aria-label={`image of ${product.title}`}/>
             <Card.Body>
               <Card.Title>{product.title}</Card.Title>
               <Card.Text>
                 Category: {product.category}<br />
                 Price: ${product.price}<br />
                 Description: {product.description}
-                <Button variant='success' onClick={() => dispatch(addToCart(product))}>Add To Cart</Button>
+                <Button 
+                variant='success' 
+                onClick={() => dispatch(addToCart(product))}
+                aria-label={`Add ${product.title} to cart`}>Add To Cart</Button>
                 {/* disptch addToCart reducer on click of add to cart button */}
               </Card.Text>
             </Card.Body>
           </Card>
         ))}
       </ListGroup>
+      </section>
     </Container>
   )
 }

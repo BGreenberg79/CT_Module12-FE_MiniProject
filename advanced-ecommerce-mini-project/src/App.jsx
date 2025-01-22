@@ -7,6 +7,7 @@ import UserList from './components/UserList'
 import ProductCatalog from './components/ProductCatalog' 
 import { Provider } from 'react-redux'
 import store from './redux/store'
+import ShoppingCart from './components/ShoppingCart'
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
       <Route path='/update-user/:id' element={<UpdateUser />} />
       <Route path='/users' element={<UserList />} />
       <Route path='/product-catalog' element={<ProductCatalog />} />
+      <Route path='/cart' element={<ShoppingCart />} />
     </Routes>
     </Provider>
 

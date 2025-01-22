@@ -33,7 +33,10 @@ const UserLogin = () => {
 
   return (
     <Container>
+        <header>
             <h1>Log In</h1>
+        </header>
+        <section>
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mx-1 my-2" controlId='emailLogin'>
                     <Form.Label>Email:</Form.Label>
@@ -44,6 +47,8 @@ const UserLogin = () => {
                             setUser({...loginUser, email: event.target.value})
                         }
                         value={loginUser.email}
+                        required
+                        aria-label='email address to log in'
                     />
                 </Form.Group>
                 <Form.Group className="mx-1 my-2" controlId='passwordLogin'>
@@ -55,13 +60,19 @@ const UserLogin = () => {
                             setUser({...loginUser, password: event.target.value})
                         }
                         value={loginUser.password}
+                        required
+                        aria-label='password to log in'
                     />
                 </Form.Group>
-                <Button variant="success" type="submit">
+                <Button 
+                variant="success" 
+                type="submit"
+                aria-label='submit log in'>
                         Submit Log In
                     </Button>
             </Form>
-        </Container>
+        </section>
+    </Container>
       )
     }
 

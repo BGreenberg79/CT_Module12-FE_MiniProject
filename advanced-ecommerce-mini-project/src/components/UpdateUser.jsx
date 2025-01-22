@@ -113,7 +113,10 @@ const UpdateUser = () => {
 
     return (
         <Container>
+            <header>
             <h1>Update User</h1>
+            </header>
+            <section>
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mx-1 my-2" controlId='email'>
                     <Form.Label>Email:</Form.Label>
@@ -124,6 +127,8 @@ const UpdateUser = () => {
                             setUser({ ...user, email: event.target.value })
                         }
                         value={user.email}
+                        required
+                        aria-label='email address'
                     />
                 </Form.Group>
                 <Form.Group className="mx-1 my-2" controlId='username'>
@@ -135,6 +140,8 @@ const UpdateUser = () => {
                             setUser({ ...user, username: event.target.value })
                         }
                         value={user.username}
+                        required
+                        aria-label='username'
                     />
                 </Form.Group>
                 <Form.Group className="mx-1 my-2" controlId='password'>
@@ -146,6 +153,8 @@ const UpdateUser = () => {
                             setUser({ ...user, password: event.target.value })
                         }
                         value={user.password}
+                        required
+                        aria-label='password'
                     />
                 </Form.Group>
                 <Form.Group className="mx-1 my-2" controlId='firstName'>
@@ -157,6 +166,8 @@ const UpdateUser = () => {
                             setUser({ ...user, firstname: event.target.value })
                         }
                         value={user.name.firstname}
+                        required
+                        aria-label='first name'
                     />
                 </Form.Group>
                 <Form.Group className="mx-1 my-2" controlId='lastName'>
@@ -168,6 +179,8 @@ const UpdateUser = () => {
                             setUser({ ...user, lastname: event.target.value })
                         }
                         value={user.name.lastname}
+                        required
+                        aria-label='last name'
                     />
                 </Form.Group>
                 <Container className='border border-info rounded p-1 m-1'>
@@ -181,6 +194,8 @@ const UpdateUser = () => {
                                 setUser({ ...user, city: event.target.value })
                             }
                             value={user.address.city}
+                            required
+                            aria-label='city'
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='street'>
@@ -192,6 +207,8 @@ const UpdateUser = () => {
                                 setUser({ ...user, street: event.target.value })
                             }
                             value={user.address.street}
+                            required
+                            aria-label='street name'
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='number'>
@@ -203,6 +220,8 @@ const UpdateUser = () => {
                                 setUser({ ...user, number: event.target.value })
                             }
                             value={user.address.number}
+                            required
+                            aria-label='building number'
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='zipCode'>
@@ -214,6 +233,8 @@ const UpdateUser = () => {
                                 setUser({ ...user, zipcode: event.target.value })
                             }
                             value={user.address.zipcode}
+                            required
+                            aria-label='zip code'
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='lat'>
@@ -225,6 +246,8 @@ const UpdateUser = () => {
                                 setUser({ ...user, lat: event.target.value })
                             }
                             value={user.address.geolocation.lat}
+                            required
+                            aria-label='latitude'
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='long'>
@@ -236,6 +259,8 @@ const UpdateUser = () => {
                                 setUser({ ...user, long: event.target.value })
                             }
                             value={user.address.geolocation.long}
+                            required
+                            aria-label='longitude'
                         />
                     </Form.Group>
                 </Container>
@@ -248,12 +273,18 @@ const UpdateUser = () => {
                             setUser({ ...user, phone: event.target.value })
                         }
                         value={user.phone}
+                        required
+                        aria-label='phone number'
                     />
                 </Form.Group>
-                <Button variant="success" type="submit">
-                    Create User
+                <Button 
+                variant="success" 
+                type="submit"
+                aria-label='update user'>
+                    Edit User Account
                 </Button>
             </Form>
+            </section>
         </Container>
     )
 }

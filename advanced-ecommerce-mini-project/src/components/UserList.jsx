@@ -42,20 +42,39 @@ const UserList = () => {
 
   return (
     <Container>
+        <header>
         <h1>User List</h1>
+        </header>
+        <section>
         <ListGroup>
             {users.map((user) => (
-                <ListGroup.Item variant='info' key={user.id}>
-                    Name: {user.name.firstname} {user.name.lastname}<br />
+                <ListGroup.Item 
+                variant='info' 
+                key={user.id}
+                aria-labelledby={`Username: ${user.username}`}
+                role='listitem'
+                >
+                    <p>Name: {user.name.firstname} {user.name.lastname}<br />
                     Username: {user.username}<br />
                     Password: {user.password}<br />
                     Email: {user.email}<br />
-                    Phone: {user.phone}<br />
-                    <Button variant='danger' className='shadow-sm m-1 p-1' onClick={() => handleDeleteUser(user.id)}>Delete</Button>
-                    <Button variant='warning' className='shadow-sm m-1 p-1' onClick={() => handleEditButton(user.id)}>Edit</Button>
+                    Phone: {user.phone}<br /></p>
+                    <Button 
+                    variant='danger' 
+                    className='shadow-sm m-1 p-1' 
+                    onClick={() => handleDeleteUser(user.id)}
+                    aria-label={`Delete user with username: ${user.username}`}
+                    >Delete</Button>
+                    <Button 
+                    variant='warning' 
+                    className='shadow-sm m-1 p-1' 
+                    onClick={() => handleEditButton(user.id)}
+                    aria-label={`Edit user with username: ${user.username}`}
+                    >Edit</Button>
                 </ListGroup.Item>
             ))}
         </ListGroup>
+        </section>
     </Container>
   )
 }
