@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { Container, ListGroup, Button } from 'react-bootstrap'
 import axios from 'axios'
 import {useNavigate} from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const UserList = () => {
 
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
+    const { t } = useTranslation()
 
     const fetchUsers = async () => {
         try {
@@ -43,7 +45,7 @@ const UserList = () => {
   return (
     <Container>
         <header>
-        <h1>User List</h1>
+        <h1>{t('userListheader')}</h1>
         </header>
         <section>
         <ListGroup>
@@ -51,26 +53,26 @@ const UserList = () => {
                 <ListGroup.Item 
                 variant='info' 
                 key={user.id}
-                aria-labelledby={`Username: ${user.username}`}
+                aria-labelledby={t('userList.listGroupUser.recordLabel', { userUsername: user.username })}
                 role='listitem'
                 >
-                    <p>Name: {user.name.firstname} {user.name.lastname}<br />
-                    Username: {user.username}<br />
-                    Password: {user.password}<br />
-                    Email: {user.email}<br />
-                    Phone: {user.phone}<br /></p>
+                    <p>{t('userList.listGroupUser.name', {userNameFirstname: user.name.firstname, userNameLastname: user.name.lastname})}<br />
+                    {t('userList.listGroupUser.username', { userUsername: user.username})}<br />
+                    {t('userList.listGroupUser.password', { userPassword: user.password })}<br />
+                    {t('userList.listGroupUser.email', { userEmail: user.email })}<br />
+                    {t('userList.listGroupUser.phone', { userPhone: user.phone })}<br /></p>
                     <Button 
                     variant='danger' 
                     className='shadow-sm m-1 p-1' 
                     onClick={() => handleDeleteUser(user.id)}
-                    aria-label={`Delete user with username: ${user.username}`}
-                    >Delete</Button>
+                    aria-label={t('userList.deleteButton.recordLabel', { userUsername:user.username })}
+                    >{t('userList.deleteButton.buttonText')}</Button>
                     <Button 
                     variant='warning' 
                     className='shadow-sm m-1 p-1' 
                     onClick={() => handleEditButton(user.id)}
-                    aria-label={`Edit user with username: ${user.username}`}
-                    >Edit</Button>
+                    aria-label={t('userList.editButton.recordLabel', { userUsername: user.username })}
+                    >{t('userList.editButton.buttonText')}</Button>
                 </ListGroup.Item>
             ))}
         </ListGroup>

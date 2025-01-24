@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../redux/cartSlice';
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -22,13 +23,14 @@ const ProductCatalog = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const loginToken = sessionStorage.getItem('authenticationToken');
     const storedUserData = sessionStorage.getItem('userData');
 
     if (!loginToken || !storedUserData) {
-      navigate('/login');
+      navigate('/');
     } else {
       fetchProducts();
       fetchCategories();
@@ -98,7 +100,7 @@ const ProductCatalog = () => {
   return (
     <Container>
       <header>
-      <h1>Product Catalog</h1>
+      <h1>{t('productCatalog.header')}</h1>
       </header>
 
       {/* Dropdown to set sorting by price */}
@@ -107,20 +109,22 @@ const ProductCatalog = () => {
         <Dropdown.Toggle 
         variant="success" 
         id="dropdownPriceSort"
-        aria-label='sort by price'
+        aria-label={t('productCatalog.dropdownSortPrice.recordLabel')}
         >
-          Sort By Price
+          {t('productCatalog.dropdownSortPrice.toggleText')}
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
           <Dropdown.Item 
           onClick={() => handleSorting('asc')}
-          aria-label='sort ascending'
-          >Ascending</Dropdown.Item>
+          aria-label={t('productCatalog.dropdownSortPrice.ascItem.recordLabel')}
+          >{t('productCatalog.dropdownSortPrice.ascItem.itemText')}
+          </Dropdown.Item>
           <Dropdown.Item 
           onClick={() => handleSorting('desc')}
-          aria-label='sort descending'
-          >Descending</Dropdown.Item>
+          aria-label={t('productCatalog.dropdownSortPrice.descItem.recordLabel')}
+          >{t('productCatalog.dropdownSortPrice.descItem.itemText')}
+          </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
 
@@ -129,9 +133,9 @@ const ProductCatalog = () => {
         <Dropdown.Toggle 
         variant="success" 
         id="dropdownSelectCategory"
-        aria-label='select product category'
+        aria-label={t('productCatalog.dropdownSelectCategory.recordLabel')}
         >
-          Select Category
+          {t('productCatalog.dropdownSelectCategory.toggleText')}
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
@@ -139,46 +143,48 @@ const ProductCatalog = () => {
             <Dropdown.Item 
             key={category} 
             onClick={() => handleCategorySelect(category)}
-            aria-label={`filter by ${category} category`}>{category}</Dropdown.Item>
+            aria-label={t('productCatalog.dropdownSelectCategory.categoryItem.recordLabel', { category })}>
+              {t('productCatalog.dropdownSelectCategory.categoryItem.itemText', { category })}
+            </Dropdown.Item>
           ))}
         </Dropdown.Menu>
       </Dropdown>
       <Form>
         <Form.Group className="my-2" controlId="searchByItem">
-          <Form.Label>Search By Item</Form.Label>
+          <Form.Label>{t('productCatalog.itemSearchFormGroup.label')}</Form.Label>
           <Form.Control
           type="text" 
-          placeholder="Search by item name" 
+          placeholder={t('productCatalog.itemSearchFormGroup.placeholder')}
           value={searchBar} 
           onChange={handleSearch}
-          aria-label='search by item name'
+          aria-label={t('productCatalog.itemSearchFormGroup.recordLabel')}
           />
         </Form.Group>
         <Form.Group className="my-2">
-          <Form.Label>Price Search</Form.Label>
+          <Form.Label>{t('productCatalog.priceSearchFormGroup.label')}</Form.Label>
           <Form.Control
           type="number" 
-          placeholder="Enter price" 
+          placeholder={t('productCatalog.priceSearchFormGroup.placeholder')} 
           value={priceSearchBar} 
           onChange={handlePriceSearch}     
-          aria-label='search by item price'
+          aria-label={t('productCatalog.priceSearchFormGroup.recordLabel')}
           />
 
         <Dropdown>
           <Dropdown.Toggle 
           variant="success" 
           id="dropdownPriceFilter"
-          aria-label='filter by price maximum or minimum'
+          aria-label={t('productCatalog.dropdownPriceFilter.recordLabel')}
           >
-            {priceMaxOrMin === 'max' ? 'Maximum Price' : 'Minimum Price'}
+            {priceMaxOrMin === 'max' ? t('productCatalog.dropdownPriceFilter.toggleTextMax') : t('productCatalog.dropdownPriceFilter.toggleTextMin')}
           </Dropdown.Toggle>
           <Dropdown.Menu>
             <Dropdown.Item 
             onClick={() => handlePriceMaxMin('max')}
-            aria-label='filter by maximum price'>Maximum Price</Dropdown.Item>
+            aria-label={t('productCatalog.dropdownPriceFilter.maxItem.recordLabel')}>{t('productCatalog.dropdownPriceFilter.maxItem.itemText')}</Dropdown.Item>
             <Dropdown.Item 
             onClick={() => handlePriceMaxMin('min')}
-            aria-label='filter by minimum price'>Minimum Price</Dropdown.Item>
+            aria-label={t('productCatalog.dropdownPriceFilter.minItem.recordLabel')}>{t('productCatalog.dropdownPriceFilter.minItem.itemText')}</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
         </Form.Group>
@@ -192,18 +198,20 @@ const ProductCatalog = () => {
             <Card.Img 
             variant="top" 
             src={product.image}
-            alt={`image of ${product.title}`}
-            aria-label={`image of ${product.title}`}/>
+            alt={t('productCatalog.listGroupProducts.image.alt', { productTitle: product.title })}
+            aria-label={t('productCatalog.listGroupProducts.image.recordLabel', { productTitle: product.title })}/>
             <Card.Body>
-              <Card.Title>{product.title}</Card.Title>
+              <Card.Title>{t('productCatalog.listGroupProducts.title',{ productTitle: product.title })}</Card.Title>
               <Card.Text>
-                Category: {product.category}<br />
-                Price: ${product.price}<br />
-                Description: {product.description}
+                {t('productCatalog.listGroupProducts.category', { productCategory: product.category})}<br />
+                {t('productCatalog.listGroupProducts.price', { productPrice: product.price})}<br />
+                {t('productCatalog.listGroupProducts.description', { productDescription: product.description })}<br />
                 <Button 
                 variant='success' 
                 onClick={() => dispatch(addToCart(product))}
-                aria-label={`Add ${product.title} to cart`}>Add To Cart</Button>
+                aria-label={t('productCatalog.listGroupProducts.addButton.recordLabel', { productTitle: product.title })}>
+                  {t('productCatalog.listGroupProducts.addButton.buttonText')}
+                  </Button>
                 {/* disptch addToCart reducer on click of add to cart button */}
               </Card.Text>
             </Card.Body>

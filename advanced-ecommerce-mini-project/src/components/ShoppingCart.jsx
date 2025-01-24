@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addToCart, removeFromCart, clearCart } from '../redux/cartSlice'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { useTranslation } from 'react-i18next'
 
 const ShoppingCart = () => {
 
@@ -11,6 +12,7 @@ const ShoppingCart = () => {
     // useSelector allows us to access the cart state from the store
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { t } = useTranslation()
 
     const [showCheckoutNotfication, setShowCheckoutNotification] = useState(false);
     const [orderHistory, setOrderHistory] = useState([]);
@@ -104,7 +106,7 @@ const ShoppingCart = () => {
         const storedUserData = sessionStorage.getItem('userData');
 
         if (!loginToken || !storedUserData) {
-            navigate('/login');
+            navigate('/');
         }
     }, [navigate]);
 
@@ -168,86 +170,86 @@ const ShoppingCart = () => {
 
     return (
         <Container>
-            <h1>Shopping Cart</h1>
+            <h1>{t('shoppingCart.header')}</h1>
             <section>
             <ListGroup>
                 {cart.length === 0 ? (
-                    <h2>Your cart is empty</h2>
+                    <h2>{t('shoppingCart.emptyCart')}</h2>
                 ) : (
                     cart.map((product) => (
                         <ListGroup.Item key={product.id}>
                             <Card>
-                                <Card.Img variant='top' src={product.image} alt={`image of ${product.title}`}/> {/*Added alt text for screen reader*/}
+                                <Card.Img variant='top' src={product.image} alt={t('shoppingCart.cartListGroup.image.alt', { productTtitle : product.title})}/> {/*Added alt text for screen reader*/}
                                 <Card.Body>
-                                    <Card.Title>{product.title}</Card.Title>
+                                    <Card.Title>{t('shoppingCart.cartListGroup.title',{ productTitle: product.title })}</Card.Title>
                                     <Card.Text>
-                                        Price: ${product.price}<br />
-                                        Description: {product.description}
-                                        Quantity: {product.quantity}<br />
+                                        {t('shoppingCart.cartListGroup.price', { productPrice: product.price})}<br />
+                                        {t('shoppingCart.cartListGroup.description', { productDescription: product.description })}
+                                        {t('shoppingCart.cartListGroup.quantity', {productQuantity : product.quantity})}<br />
                                         <Button 
                                         variant='success' 
                                         onClick={() => dispatch(addToCart(product))}
-                                        aria-label={`Add additional ${product.title} to cart`}>
-                                        Add Additional</Button>
+                                        aria-label={t('shoppingCart.addButton.recordLabel', {productTitle: product.title})}>
+                                        {t('shoppingCart.addButton.buttonText')}</Button>
                                         {/* dispatches addToCart reducer from cartSlice */}
                                         <Button 
                                         variant='danger' 
                                         onClick={() => dispatch(removeFromCart(product))}
-                                        aria-label={`Remove ${product.title} from cart`}>
-                                        Remove</Button>
+                                        aria-label={t('shoppingCart.removeButton.recordLabel')}>
+                                        {t('shoppingCart.removeButton.buttonText')}</Button>
                                         {/* dispatches removeFromCart reducer from cartSlice */}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
                         </ListGroup.Item>)))}
             </ListGroup>
-            <p>Total Number of Items in Cart: {handleTotalItems()}</p>
-            <p>Total Price: {handlePriceTotal()}</p>
+            <p>{t('shoppingCart.totalItems')} {handleTotalItems()}</p>
+            <p>{t('shoppingCart.totalPrice')} {handlePriceTotal()}</p>
             <Button 
             variant='danger' 
             onClick={() => dispatch(clearCart())}
-            aria-label='clear all items in cart'
-            >Clear Cart</Button>
+            aria-label={t('shoppingCart.clearButton.recordLabel')}
+            >{t('shoppingCart.clearButton.buttonText')}</Button>
             <Button 
             variant='success' 
             onClick={handleCheckout}
-            aria-label='initiate checkout'
-            >Checkout</Button>
+            aria-label={t('shoppingCart.checkoutButton.recordLabel')}
+            >{t('shoppingCart.checkoutButton.buttonText')}</Button>
             <Modal 
             show={showCheckoutNotfication} 
             onHide={handleCloseNotification}
-            aria-labelledby='checkout completed'
+            aria-labelledby={t('shoppingCart.completionModal.recordLabel')}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title id='checkoutNotification'>Checkout Completed</Modal.Title>
+                    <Modal.Title id='checkoutNotification'>{t('shoppingCart.completionModal.modalTitle')}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>You have successfully checked out!</Modal.Body>
+                <Modal.Body>{t('shoppingCart.completionModal.modalBody')}</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseNotification}>
-                        Close
+                        {t('shoppingCart.completionModal.closeButton')}
                     </Button>
                 </Modal.Footer>
             </Modal>
             </section>
             
             <section>
-            <h2>Order History</h2>
+            <h2>{t('shoppingCart.orderHistoryHeader')}</h2>
             <ListGroup>
                 {orderHistory.map((order) => (
                     <ListGroup.Item 
                     key={order.id}>
                         <Card>
                             <Card.Body>
-                                <Card.Title>Order ID: {order.id}</Card.Title>
+                                <Card.Title>{t('shoppingCart.historyListGroup.orderId', {orderId: order.id})}</Card.Title>
                                     <Card.Text>
-                                        Date Created: {new Date(order.date).toLocaleDateString()}<br />
+                                        {t('shoppingCart.historyListGroup.dateCreated')} {new Date(order.date).toLocaleDateString()}<br />
                                         {/* Uses local date string to support internationalization instead of raw date */}
-                                        Total Price: ${order.totalPrice}<br />
+                                        {t('shoppingCart.historyListGroup.totalPrice', {orderTotalPrice : order.totalPrice})}<br />
                                         <Button 
                                         variant='success' 
                                         onClick={() => handleShowOrderDetails(order.id)}
-                                        aria-label={`view details for order ${order.id}`}
-                                        >Show Product Details</Button>
+                                        aria-label={t('shoppingCart.historyListGroup.detailsButton.recordLabel', {orderId: order.id})}
+                                        >{t('shoppingCart.historyListGroup.detailsButton.buttonText')}</Button>
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
@@ -258,21 +260,21 @@ const ShoppingCart = () => {
             <Modal 
             show={selectedOrder !== null} 
             onHide={handleCloseOrderDetails}
-            aria-labelledby='order details'
+            aria-labelledby={t('shoppingCart.detailsModal.recordLabel')}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title id='orderDetails'>Order Details</Modal.Title>
+                    <Modal.Title id='orderDetails'>{t('shoppingCart.detailsModal.modalTitle')}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Order ID: {selectedOrder.id} <br />
-                    Date: {new Date(selectedOrder.date).toLocaleDateString()} <br />
-                    Total Price: ${selectedOrder.totalPrice} <br />
-                    Products in this Order:
+                    {t('shoppingCart.detailsModal.orderId', {selectedOrderId: selectedOrder.id})} <br />
+                    {t('shoppingCart.detailsModal.date')} {new Date(selectedOrder.date).toLocaleDateString()} <br />
+                    {t('shoppingCart.detailsModal.totalPrice', {selectedOrderTotalPrice: selectedOrder.totalPrice})} <br />
+                    {t('shoppingCart.detailsModal.productHeader')}<br/>
                             <ListGroup>
                                 {selectedOrder.products.map((product) => (
                                     <ListGroup.Item key={product.productId}>
-                                        Product ID: {product.productId} <br />
-                                        Quantity: {product.quantity} <br />
+                                        {t('shoppingCart.detailsModal.productList.productId', {productProductId: product.productId})} <br />
+                                        {t('shoppingCart.detailsModal.productList.quantity', {productQuantity: product.quantity})} <br />
                                     </ListGroup.Item>
                                 ))}
                             </ListGroup>
@@ -280,7 +282,7 @@ const ShoppingCart = () => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseOrderDetails}>
-                        Close
+                        {t('shoppingCart.detailsModal.closeButton')}
                     </Button>
                 </Modal.Footer>
             </Modal>

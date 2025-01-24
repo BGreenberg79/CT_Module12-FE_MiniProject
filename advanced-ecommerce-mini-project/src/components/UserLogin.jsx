@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const UserLogin = () => {
     const navigate = useNavigate();
@@ -9,6 +10,8 @@ const UserLogin = () => {
         email: '',
         password: ''
     });
+
+    const { t } = useTranslation()
 
     const loginAPI = async (loginUser) => {
         // API Request authenticates user 
@@ -34,41 +37,41 @@ const UserLogin = () => {
   return (
     <Container>
         <header>
-            <h1>Log In</h1>
+            <h1>{t('userLogin.header')}</h1>
         </header>
         <section>
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mx-1 my-2" controlId='emailLogin'>
-                    <Form.Label>Email:</Form.Label>
+                    <Form.Label>{t('userLogin.emailFormGroup.label')}</Form.Label>
                     <Form.Control
                         type='text'
-                        placeholder='Your Email'
+                        placeholder={t('userLogin.emailFormGroup.placeholder')}
                         onChange={event =>
                             setUser({...loginUser, email: event.target.value})
                         }
                         value={loginUser.email}
                         required
-                        aria-label='email address to log in'
+                        aria-label={t('userLogin.emailFormGroup.recordLabel')}
                     />
                 </Form.Group>
                 <Form.Group className="mx-1 my-2" controlId='passwordLogin'>
-                    <Form.Label>Password:</Form.Label>
+                    <Form.Label>{t('userLogin.passwordFormGroup.label')}</Form.Label>
                     <Form.Control
-                        type='text'
-                        placeholder='Your Password'
+                        type='password'
+                        placeholder={t('userLogin.passwordFormGroup.placeholder')}
                         onChange={event =>
                             setUser({...loginUser, password: event.target.value})
                         }
                         value={loginUser.password}
                         required
-                        aria-label='password to log in'
+                        aria-label={t('userLogin.passwordFormGroup.recordLabel')}
                     />
                 </Form.Group>
                 <Button 
                 variant="success" 
                 type="submit"
-                aria-label='submit log in'>
-                        Submit Log In
+                aria-label={t('userLogin.loginButton.recordLabel')}>
+                        {t('userLogin.loginButton.buttonText')}
                     </Button>
             </Form>
         </section>

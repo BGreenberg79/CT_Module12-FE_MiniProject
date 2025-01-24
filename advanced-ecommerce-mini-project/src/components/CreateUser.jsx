@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 
 const CreateUser = () => {
 
+    const { t } = useTranslation()
     const [user, setUser] = useState({
         email: '',
         username: '',
@@ -60,174 +62,174 @@ const CreateUser = () => {
     return (
         <Container>
             <header>
-            <h1>New User</h1>
+            <h1>{t('createUser.header')}</h1>
             </header>
             <section>
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mx-1 my-2" controlId='email'>
-                    <Form.Label>Email:</Form.Label>
+                    <Form.Label>{t('createUser.emailFormGroup.label')}</Form.Label>
                     <Form.Control
                         type='text'
-                        placeholder='Your Email'
+                        placeholder={t('createUser.emailFormGroup.placeholder')}
                         onChange={event =>
                             setUser({ ...user, email: event.target.value })
                         }
                         value={user.email}
                         required
-                        aria-label='email address'
+                        aria-label={t('createUser.emailFormGroup.recordLabel')}
                     />
                 </Form.Group>
                 <Form.Group className="mx-1 my-2" controlId='username'>
-                    <Form.Label>Username:</Form.Label>
+                    <Form.Label>{t('createUser.usernameFormGroup.label')}</Form.Label>
                     <Form.Control
                         type='text'
-                        placeholder='Your Username'
+                        placeholder={t('createUser.usernameFormGroup.placeholder')}
                         onChange={event =>
                             setUser({ ...user, username: event.target.value })
                         }
                         value={user.username}
                         required
-                        aria-label='username'
+                        aria-label={t('createUser.usernameFormGroup.recordLabel')}
                     />
                 </Form.Group>
                 <Form.Group className="mx-1 my-2" controlId='password'>
-                    <Form.Label>Password:</Form.Label>
+                    <Form.Label>{t('createUser.passwordFormGroup.label')}</Form.Label>
                     <Form.Control
-                        type='text'
-                        placeholder='Your Password'
+                        type='password'
+                        placeholder={t('createUser.passwordFormGroup.placeholder')}
                         onChange={event =>
                             setUser({ ...user, password: event.target.value })
                         }
                         value={user.password}
                         required
-                        aria-label='password'
+                        aria-label={t('createUser.passwordFormGroup.recordLabel')}
                     />
                 </Form.Group>
                 <Form.Group className="mx-1 my-2" controlId='firstName'>
-                    <Form.Label>First Name:</Form.Label>
+                    <Form.Label>{t('createUser.firstNameFormGroup.label')}</Form.Label>
                     <Form.Control
                         type='text'
-                        placeholder='Your First Name'
+                        placeholder={t('createUser.firstNameFormGroup.placeholder')}
                         onChange={event =>
                             setUser({ ...user, firstname: event.target.value })
                         }
                         value={user.name.firstname}
                         required
-                        aria-label='first name'
+                        aria-label={t('createUser.firstNameFormGroup.recordLabel')}
                     />
                 </Form.Group>
                 <Form.Group className="mx-1 my-2" controlId='lastName'>
-                    <Form.Label>Last Name:</Form.Label>
+                    <Form.Label>{t('createUser.lastNameFormGroup.label')}</Form.Label>
                     <Form.Control
                         type='text'
-                        placeholder='Your Last Name'
+                        placeholder={t('createUser.lastNameFormGroup.placeholder')}
                         onChange={event =>
                             setUser({ ...user, lastname: event.target.value })
                         }
                         value={user.name.lastname}
                         required
-                        aria-label='last name'
+                        aria-label={t('createUser.lastNameFormGroup.recordLabel')}
                     />
                 </Form.Group>
                 <Container className='border border-info rounded p-1 m-1'>
-                    <h2 className='mt-2 font-weight-bold'>Address</h2>
+                    <h2 className='mt-2 font-weight-bold'>{t('createUser.addressHeader')}</h2>
                     <Form.Group className="mx-1 my-2" controlId='city'>
-                        <Form.Label>City:</Form.Label>
+                        <Form.Label>{t('createUser.cityFormGroup.label')}</Form.Label>
                         <Form.Control
                             type='text'
-                            placeholder='Your City'
+                            placeholder={t('createUser.cityFormGroup.placeholder')}
                             onChange={event =>
                                 setUser({ ...user, city: event.target.value })
                             }
                             value={user.address.city}
                             required
-                            aria-label='city'
+                            aria-label={t('createUser.cityFormGroup.recordLabel')}
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='street'>
-                        <Form.Label>Street:</Form.Label>
+                        <Form.Label>{t('createUser.streetFormGroup.label')}</Form.Label>
                         <Form.Control
                             type='text'
-                            placeholder='Your Street Address'
+                            placeholder={t('createUser.streetFormGroup.placeholder')}
                             onChange={event =>
                                 setUser({ ...user, street: event.target.value })
                             }
                             value={user.address.street}
                             required
-                            aria-label='street name'
+                            aria-label={t('createUser.streetFormGroup.recordLabel')}
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='number'>
-                        <Form.Label>Number:</Form.Label>
+                        <Form.Label>{t('createUser.numberFormGroup.label')}</Form.Label>
                         <Form.Control
                             type='number'
-                            placeholder='Your Building Number'
+                            placeholder={t('createUser.numberFormGroup.placeholder')}
                             onChange={event =>
                                 setUser({ ...user, number: event.target.value })
                             }
                             value={user.address.number}
                             required
-                            aria-label='building number'
+                            aria-label={t('createUser.numberFormGroup.recordLabel')}
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='zipCode'>
-                        <Form.Label>Zip Code:</Form.Label>
+                        <Form.Label>{t('createUser.zipCodeFormGroup.label')}</Form.Label>
                         <Form.Control
                             type='text'
-                            placeholder='Your Zip Code'
+                            placeholder={t('createUser.zipCodeFormGroup.placeholder')}
                             onChange={event =>
                                 setUser({ ...user, zipcode: event.target.value })
                             }
                             value={user.address.zipcode}
                             required
-                            aria-label='zip code'
+                            aria-label={t('createUser.zipCodeFormGroup.recordLabel')}
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='lat'>
-                        <Form.Label>Latitude:</Form.Label>
+                        <Form.Label>{t('createUser.latitudeFormGroup.label')}</Form.Label>
                         <Form.Control
                             type='text'
-                            placeholder='Your Latitude'
+                            placeholder={t('createUser.latitudeFormGroup.placeholder')}
                             onChange={event =>
                                 setUser({ ...user, lat: event.target.value })
                             }
                             value={user.address.geolocation.lat}
                             required
-                            aria-label='latitude'
+                            aria-label={t('createUser.latitudeFormGroup.recordLabel')}
                         />
                     </Form.Group>
                     <Form.Group className="mx-1 my-2" controlId='long'>
-                        <Form.Label>Longitude:</Form.Label>
+                        <Form.Label>{t('createUser.longitudeFormGroup.label')}</Form.Label>
                         <Form.Control
                             type='text'
-                            placeholder='Your Longitude'
+                            placeholder={t('createUser.longitudeFormGroup.placeholder')}
                             onChange={event =>
                                 setUser({ ...user, long: event.target.value })
                             }
                             value={user.address.geolocation.long}
                             required
-                            aria-label='longitude'
+                            aria-label={t('createUser.longitudeFormGroup.recordLabel')}
                         />
                     </Form.Group>
                 </Container>
                 <Form.Group className="mx-1 my-2" controlId='phone'>
-                    <Form.Label>Phone Number:</Form.Label>
+                    <Form.Label>{t('createUser.phoneNumberFormGroup.label')}</Form.Label>
                     <Form.Control
                         type='text'
-                        placeholder='Your Phone Number'
+                        placeholder={t('createUser.phoneNumberFormGroup.placeholder')}
                         onChange={event =>
                             setUser({ ...user, phone: event.target.value })
                         }
                         value={user.phone}
                         required
-                        aria-label='phone number'
+                        aria-label={t('createUser.phoneNumberFormGroup.recordLabel')}
                     />
                 </Form.Group>
                 <Button 
                 variant="success" 
                 type="submit"
-                aria-label='create new user account'>
-                    Create User
+                aria-label={t('createUser.submitButton.recordLabel')}>
+                    {t('createUser.submitButton.buttonText')}
                 </Button>
             </Form>
             </section>
