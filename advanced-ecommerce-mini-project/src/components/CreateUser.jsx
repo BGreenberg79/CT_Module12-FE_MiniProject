@@ -6,7 +6,10 @@ import { useTranslation } from 'react-i18next';
 
 const CreateUser = () => {
 
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation();
+    const changeLanguage = (lng) =>{
+        i18n.changeLanguage(lng);
+    }
     const [user, setUser] = useState({
         email: '',
         username: '',
@@ -64,6 +67,10 @@ const CreateUser = () => {
             <header>
             <h1>{t('createUser.header')}</h1>
             </header>
+            <div>
+                <Button variant='warning' onClick={()=> changeLanguage('en')}>English</Button>
+                <Button variant='warning' onClick={()=> changeLanguage('zh')}>普通话 中文</Button>
+            </div>
             <section>
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mx-1 my-2" controlId='email'>

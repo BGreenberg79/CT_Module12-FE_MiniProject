@@ -23,7 +23,10 @@ const ProductCatalog = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const changeLanguage = (lng) =>{
+      i18n.changeLanguage(lng);
+    }
 
   useEffect(() => {
     const loginToken = sessionStorage.getItem('authenticationToken');
@@ -102,7 +105,10 @@ const ProductCatalog = () => {
       <header>
       <h1>{t('productCatalog.header')}</h1>
       </header>
-
+      <div>
+        <Button variant='warning' onClick={()=> changeLanguage('en')}>English</Button>
+        <Button variant='warning' onClick={()=> changeLanguage('zh')}>普通话 中文</Button>
+      </div>
       {/* Dropdown to set sorting by price */}
       <section>
       <Dropdown>

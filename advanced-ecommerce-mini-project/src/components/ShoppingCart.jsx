@@ -12,7 +12,10 @@ const ShoppingCart = () => {
     // useSelector allows us to access the cart state from the store
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation();
+    const changeLanguage = (lng) =>{
+        i18n.changeLanguage(lng);
+     }
 
     const [showCheckoutNotfication, setShowCheckoutNotification] = useState(false);
     const [orderHistory, setOrderHistory] = useState([]);
@@ -171,6 +174,10 @@ const ShoppingCart = () => {
     return (
         <Container>
             <h1>{t('shoppingCart.header')}</h1>
+            <div>
+                <Button variant='warning' onClick={()=> changeLanguage('en')}>English</Button>
+                <Button variant='warning' onClick={()=> changeLanguage('zh')}>普通话 中文</Button>
+            </div>
             <section>
             <ListGroup>
                 {cart.length === 0 ? (

@@ -179,7 +179,7 @@
             "modalTitle":"Order Details",
             "orderId": "Order ID: {{selectedOrderId}}",
             "date": "Date:",
-            "totalPrice": "TotalPrice: ${{selectedOrderTotalPrice}}",
+            "totalPrice": "Total Price: ${{selectedOrderTotalPrice}}",
             "productHeader":"Products in this Order:",
             "productList":{
                 "productId": "Product ID: {{productProductId}}",

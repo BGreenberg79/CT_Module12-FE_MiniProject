@@ -8,7 +8,10 @@ const UserList = () => {
 
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation();
+    const changeLanguage = (lng) =>{
+        i18n.changeLanguage(lng);
+     }
 
     const fetchUsers = async () => {
         try {
@@ -47,6 +50,10 @@ const UserList = () => {
         <header>
         <h1>{t('userListheader')}</h1>
         </header>
+        <div>
+            <Button variant='warning' onClick={()=> changeLanguage('en')}>English</Button>
+            <Button variant='warning' onClick={()=> changeLanguage('zh')}>普通话 中文</Button>
+        </div>
         <section>
         <ListGroup>
             {users.map((user) => (

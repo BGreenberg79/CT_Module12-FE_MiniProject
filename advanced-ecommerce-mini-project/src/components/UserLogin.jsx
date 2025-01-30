@@ -11,7 +11,10 @@ const UserLogin = () => {
         password: ''
     });
 
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation();
+    const changeLanguage = (lng) => {
+        i18n.changeLanguage(lng);
+    }
 
     const loginAPI = async (loginUser) => {
         // API Request authenticates user 
@@ -39,6 +42,10 @@ const UserLogin = () => {
         <header>
             <h1>{t('userLogin.header')}</h1>
         </header>
+        <div>
+            <Button variant='warning' onClick={()=> changeLanguage('en')}>English</Button>
+            <Button variant='warning' onClick={()=> changeLanguage('zh')}>普通话 中文</Button>
+        </div>
         <section>
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mx-1 my-2" controlId='emailLogin'>
@@ -47,7 +54,7 @@ const UserLogin = () => {
                         type='text'
                         placeholder={t('userLogin.emailFormGroup.placeholder')}
                         onChange={event =>
-                            setUser({...loginUser, email: event.target.value})
+                            setLoginUser({...loginUser, email: event.target.value})
                         }
                         value={loginUser.email}
                         required
@@ -60,7 +67,7 @@ const UserLogin = () => {
                         type='password'
                         placeholder={t('userLogin.passwordFormGroup.placeholder')}
                         onChange={event =>
-                            setUser({...loginUser, password: event.target.value})
+                            setLoginUser({...loginUser, password: event.target.value})
                         }
                         value={loginUser.password}
                         required

@@ -28,7 +28,10 @@ const UpdateUser = () => {
         },
         phone: '',
     })
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation();
+    const changeLanguage = (lng) =>{
+        i18n.changeLanguage(lng);
+     }
 
     const fetchSingleUser = async () => {
         try {
@@ -118,6 +121,10 @@ const UpdateUser = () => {
             <header>
             <h1>{t('updateUser.header')}</h1>
             </header>
+            <div>
+                <Button variant='warning' onClick={()=> changeLanguage('en')}>English</Button>
+                <Button variant='warning' onClick={()=> changeLanguage('zh')}>普通话 中文</Button>
+            </div>
             <section>
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mx-1 my-2" controlId='email'>
