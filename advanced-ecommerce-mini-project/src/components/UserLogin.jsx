@@ -18,24 +18,35 @@ const UserLogin = () => {
 
     const loginAPI = async (loginUser) => {
         // API Request authenticates user 
-        const response = await axios.post('https://fakestoreapi.com/auth/login',
+        try{
+            const response = await axios.post('https://fakestoreapi.com/auth/login',
             {email: loginUser.email,
             password: loginUser.password})
 
             // returning the response.data will provide the token we needto save to session storage 
             return response.data;}
+        catch (error) {
+            console.error(error)
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        try{
         const responseData = await loginAPI(loginUser);
 
         if (responseData && responseData.token) {
-            sessionStorage.setItem('authenicationToken', responseData.token);
+            sessionStorage.setItem('authenticationToken', responseData.token);
             sessionStorage.setItem('userData', JSON.stringify(responseData)); //stores all of user's data
             navigate('/product-catalog');
+        } else {
+            alert('Invalid email or password');
+        }}
+        catch (error) {
+            console.error(error)
         }
     }
+
 
   return (
     <Container>
@@ -79,11 +90,11 @@ const UserLogin = () => {
                 type="submit"
                 aria-label={t('userLogin.loginButton.recordLabel')}>
                         {t('userLogin.loginButton.buttonText')}
-                    </Button>
+                </Button>
             </Form>
         </section>
     </Container>
       )
-    }
+}
 
 export default UserLogin;

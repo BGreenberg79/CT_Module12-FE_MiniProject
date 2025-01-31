@@ -1,9 +1,9 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor} from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act} from '@testing-library/react';
 import CreateUser from '../components/CreateUser';
 import axios from 'axios';
 import { BrowserRouter } from 'react-router-dom';
-import { act } from 'react-dom/test-utils';
+
 
 jest.mock('axios')
 jest.mock('react-i18next', () => ({
@@ -46,44 +46,44 @@ describe('Testing CreateUser component to mock API calls', () => {
             </BrowserRouter>
         );
         
-        fireEvent.change(screen.getByLabelText('createUser.emailFormGroup.label'), { 
+        fireEvent.change(screen.getByLabelText(/Email:/i), { 
             target: { value: 'test@testing.com'}});
 
-        fireEvent.change(screen.getByLabelText('createUser.usernameFormGroup.label'), { 
+        fireEvent.change(screen.getByLabelText(/Username:/i), { 
             target: { value: 'testUser'}});
 
-        fireEvent.change(screen.getByLabelText('createUser.passwordFormGroup.label'), { 
+        fireEvent.change(screen.getByLabelText(/Password:/i), { 
             target: { value: 'password456'}});
 
-        fireEvent.change(screen.getByLabelText('createUser.firstnameFormGroup.label'), { 
+        fireEvent.change(screen.getByLabelText(/First Name:/i), { 
             target: { value: 'Jane'}});
 
-        fireEvent.change(screen.getByLabelText('createUser.lastnameFormGroup.label'), {
+        fireEvent.change(screen.getByLabelText(/Last Name:/i), {
             target: { value: 'Doe'}});
 
-        fireEvent.change(screen.getByLabelText('createUser.cityFormGroup.label'), {
+        fireEvent.change(screen.getByLabelText(/City:/i), {
             target: { value: 'Orlando'}});
         
-        fireEvent.change(screen.getByLabelText('createUser.streetFormGroup.label'), {
+        fireEvent.change(screen.getByLabelText(/Street:/i), {
             target: { value: 'Orange Avenue'}});
 
-        fireEvent.change(screen.getByLabelText('createUser.numberFormGroup.label'), {
+        fireEvent.change(screen.getByLabelText(/Number:/i), {
             target: { value: '2'}});
 
-        fireEvent.change(screen.getByLabelText('createUser.zipcodeFormGroup.label'), {
+        fireEvent.change(screen.getByLabelText(/Zip Code:/i), {
             target: { value: '32800'}});
 
-        fireEvent.change(screen.getByLabelText('createUser.latFormGroup.label'), {
+        fireEvent.change(screen.getByLabelText(/Latitude:/i), {
             target: { value: '44'}});
 
-        fireEvent.change(screen.getByLabelText('createUser.longFormGroup.label'), {
+        fireEvent.change(screen.getByLabelText(/Longitude:/i), {
             target: { value: '50'}});
 
-        fireEvent.change(screen.getByLabelText('createUser.phoneFormGroup.label'), {
+        fireEvent.change(screen.getByLabelText(/Phone Number:/i), {
             target: { value: '123-456-7890'}});
 
         await act(async () => {
-            fireEvent.click(screen.getByRole('button', { name: 'createUser.submitButton.buttonText'}));
+            fireEvent.click(screen.getByRole('button', { name: /Create User/}));
         });
 
         await waitFor(() => {
@@ -105,8 +105,8 @@ describe('Testing CreateUser component to mock API calls', () => {
                         long: '50'
                     }
                 },
-                phone: '123-456-7890'}
-            )
+                phone: '123-456-7890'
+            })
         });
     });
 });

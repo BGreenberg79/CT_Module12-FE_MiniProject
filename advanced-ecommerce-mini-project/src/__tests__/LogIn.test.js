@@ -1,13 +1,13 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor} from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act} from '@testing-library/react';
 import UserLogin from '../components/UserLogin';
 import axios from 'axios';
 import {BrowserRouter, useNavigate} from 'react-router-dom';
-import { act } from 'react-dom/test-utils';
 import { useTranslation } from 'react-i18next';
 
 jest.mock('axios');
 jest.mock('react-router-dom', () =>({
+    ...jest.requireActual('react-router-dom'),
     useNavigate: jest.fn(),
 }));
 
@@ -22,15 +22,12 @@ jest.mock('react-i18next', () => ({
 
 describe('UserLogin Component unit tests', () => {
     let mockNavigate;
-    let mockChangeLanguage;
 
     beforeEach(() => {
         mockNavigate = jest.fn()
-        jest.mock('react-router-dom', ()=> ({
-            useNavigate: () => mockNavigate,
-        }));
-        mockChangeLanguage = require('react-i18next').useTranslation().i18n.changeLanguage;
-    });
+        require('react-router-dom').useNavigate.mockReturnValue(mockNavigate);
+    })
+    test('changes language when button is clicked', () => {
         render(
             <BrowserRouter>
                 <UserLogin />
@@ -41,10 +38,10 @@ describe('UserLogin Component unit tests', () => {
         const mandarinButton = screen.getByText('普通话 中文');
 
         fireEvent.click(englishButton);
-        expect(mockChangeLanguage).toHaveBeenCalledWith('en');
+        expect(require('react-i18next').useTranslation().i18n.changeLanguage).toHaveBeenCalledWith('en');
 
         fireEvent.click(mandarinButton);
-        expect(mockChangeLanguage).toHaveBeenCalledWith('zh');
+        expect(require('react-i18next').useTranslation().i18n.changeLanguage).toHaveBeenCalledWith('zh');
     });
 
     test('navigates to product-catalog page if user is authenticated', async () => {
@@ -58,9 +55,9 @@ describe('UserLogin Component unit tests', () => {
             </BrowserRouter>
         );
 
-        const emailInput = screen.getByLabelText('userLogin.emailFormGroup.label');
-        const passwordInput = screen.getByLabelText('userLogin.passwordFormGroup.label');
-        const submitButton = screen.getByRole('button', { name: 'userLogin.loginButton.buttonText'});
+        const emailInput = screen.getByLabelText(/Email:/i);
+        const passwordInput = screen.getByLabelText(/Password:/i);
+        const submitButton = screen.getByRole('button', { name: /Submit Log In/i });
 
         fireEvent.change(emailInput, { target: { value: 'fakeEmail@example.com' } });
         fireEvent.change(passwordInput, { target: { value: 'fakePassword456' } });
@@ -73,3 +70,4 @@ describe('UserLogin Component unit tests', () => {
             expect(mockNavigate).toHaveBeenCalledWith('/product-catalog');
         });
     });
+});

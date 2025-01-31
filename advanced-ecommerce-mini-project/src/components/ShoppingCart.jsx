@@ -25,6 +25,7 @@ const ShoppingCart = () => {
 // useCallback to optimize performance by memoizing the fetchProductsForPrice function
     const fetchProductsForPrice = useCallback(async (productId) => {
         // Check for product data already cached in local storage  
+        try{
         const cachedProduct = localStorage.getItem(`product-${productId}`);
         if (cachedProduct) {
             setProducts((prevProducts) => ({
@@ -35,7 +36,7 @@ const ShoppingCart = () => {
         } 
 
         if (!products[productId]) { //prevent fetching the same product multiple times
-        try {
+        
             const response = await axios.get(`https://fakestoreapi.com/products/${productId}`);
             const productData = response.data;
             localStorage.setItem(`product-${productId}`, JSON.stringify(productData)); // cache product data in local storage
@@ -43,15 +44,15 @@ const ShoppingCart = () => {
                 ...prevProducts,
                 [productId]: productData,
             }));
-            } catch (error) {
+            }} catch (error) {
                 console.error('Error fetching product details:', error);
             }
-        }
-    });
+    }, []);
 
 
     // Fetch order history from FakeStoreAPI
         const fetchOrderHistory = useCallback(async () => {
+            try {
             // Check for cached order history in local storage
             const cachedOrderHistory = localStorage.getItem('orderHistory');
             if (cachedOrderHistory) {
@@ -59,7 +60,7 @@ const ShoppingCart = () => {
                 return;
             }
         
-            try {
+            
                 const response = await axios.get('https://fakestoreapi.com/carts');
 
                 // Fetch products for each order
@@ -71,13 +72,28 @@ const ShoppingCart = () => {
                 });
 
                 // Fetch details for all unique productIds
-                await Promise.all(Array.from(allProductIds).map(productId => fetchProductsForPrice(productId)));
+                const productDetails = {}
+                await Promise.all(
+                    Array.from(allProductIds).map( async (productId) => {
+                        await fetchProductsForPrice(productId);
+                        productDetails[productId] = JSON.parse(localStorage.getItem(`product-${productId}`));
+            })
+            );
+                    
 
                 const responseWithPrice = response.data.map((order) => {
-                    const priceCalculation = calculateTotalPrice(order.products);
+                    const totalPrice = order.products.reduce((total, item) => {
+                        const product = productDetails[item.productId];
+                        if (!product) return total; //Skips product if fetch call hasn't been completed yet or fails
+                        return total + (product.price * item.quantity);
+                    }, 0);
                     return {
                         ...order,
-                        totalPrice: priceCalculation,
+                        totalPrice,
+                        products: order.products.map(item => ({
+                            ...item,
+                            ...productDetails[item.productId],
+                        })),
                     };
                 })
 // cache order history in local storage
@@ -93,15 +109,15 @@ const ShoppingCart = () => {
         fetchOrderHistory();;
     }, [fetchOrderHistory]);
 // memoize totalprice of each order in history
-    const calculateTotalPrice = useMemo((orderProducts) => {
-        return orderProducts.reduce((total, item) => {
-            const product = products[item.productId];
-            if (!product) {
-                return total; //Skips product if fetch call hasn't been completed yet or fails
-            }
-            return total + (product.price * item.quantity);
-        }, 0);
-    }, [products]);
+    // const calculateTotalPrice = useMemo(() => {
+    //     return orderHistory..reduce((total, item) => {
+    //         const product = products[item.productId];
+    //         if (!product) {
+    //             return total; //Skips product if fetch call hasn't been completed yet or fails
+    //         }
+    //         return total + (product.price * item.quantity);
+    //     }, 0);
+    // }, [products]);
 
     // Check for login and user data
     useEffect(() => {
@@ -210,8 +226,8 @@ const ShoppingCart = () => {
                             </Card>
                         </ListGroup.Item>)))}
             </ListGroup>
-            <p>{t('shoppingCart.totalItems')} {handleTotalItems()}</p>
-            <p>{t('shoppingCart.totalPrice')} {handlePriceTotal()}</p>
+            <p>{t('shoppingCart.totalItems')} {handleTotalItems}</p>
+            <p>{t('shoppingCart.totalPrice')} {handlePriceTotal}</p>
             <Button 
             variant='danger' 
             onClick={() => dispatch(clearCart())}

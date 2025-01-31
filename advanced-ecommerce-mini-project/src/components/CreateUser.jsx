@@ -32,7 +32,8 @@ const CreateUser = () => {
     });
 
     const addUserAPI = async (user) => {
-        const response = await axios.post('https://fakestoreapi.com/users',
+        try {
+            const response = await axios.post('https://fakestoreapi.com/users',
             {
                 email: user.email,
                 username: user.username,
@@ -54,6 +55,9 @@ const CreateUser = () => {
                 phone: user.phone
             });
         return response.data;
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     const handleSubmit = (e) => {

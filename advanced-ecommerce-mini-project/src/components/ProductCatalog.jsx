@@ -86,17 +86,21 @@ const ProductCatalog = () => {
 
 
 
-  const filteredProducts = useMemo(products.filter((product) => {
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
     const titleMatch = product.title.toLowerCase().includes(searchBar.toLowerCase());
     const categoryMatch = selectedCategory === '' || product.category === selectedCategory;
     let priceMatch = true
     if (priceSearchBar) {
       if (priceMaxOrMin === 'max') {
-        priceMatch = product.price <= priceSearchBar;}
-      else {
-        priceMatch = product.price >= priceSearchBar;}}
+        priceMatch = product.price <= priceSearchBar;
+      } else {
+        priceMatch = product.price >= priceSearchBar;
+      }
+    }
     return titleMatch && categoryMatch && priceMatch;
-  }), [products, searchBar, priceSearchBar, priceMaxOrMin, selectedCategory]);
+  });
+ }, [products, searchBar, priceSearchBar, priceMaxOrMin, selectedCategory]);
 
   // Added useMemo to memoize the filteredProducts array to minimize rerendering
 

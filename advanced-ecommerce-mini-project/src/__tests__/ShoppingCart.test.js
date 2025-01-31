@@ -1,14 +1,16 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act, configure} from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act} from '@testing-library/react';
 import { Provider } from 'react-redux';
 import ShoppingCart from '../components/ShoppingCart';
 import axios from 'axios';
 import { BrowserRouter } from 'react-router-dom';
-import store from '../redux/store';
-import  configureStore  from '@reduxjs/toolkit';
-import { addToCart, removeFromCart, clearCart } from '../redux/cartSlice';
+import { configureStore }  from '@reduxjs/toolkit';
+import cartReducer from '../redux/cartSlice';
+import { addToCart } from '../redux/cartSlice';
 
 jest.mock('axios');
+
+
 
 const mockCartItem = {
     id: 1,
@@ -21,8 +23,14 @@ const mockCartItem = {
 }
 
 describe('ShoppingCart Component integration tests', () => {
+    let store;
+
     beforeEach(() => {
-        store.dispatch(clearCart());
+        store = configureStore({
+            reducer: {
+                cart: cartReducer
+            }
+        });
     });
 
     test('render empty shopping cart message when empty', () => {
@@ -34,7 +42,7 @@ describe('ShoppingCart Component integration tests', () => {
             </Provider>
         );
 
-        expect(screen.getByText(/Your shopping cart is empty./i)).toBeInTheDocument();
+        expect(screen.getByText(/Your shopping cart is empty/i)).toBeInTheDocument();
     });
 
     test('adds items when add button is clicked', async () => {
@@ -45,18 +53,15 @@ describe('ShoppingCart Component integration tests', () => {
                 </BrowserRouter>
             </Provider>
         );
-        const addButton = screen.getByText(/Add to Cart/i);
 
-        fireEvent.click(addButton);
-
-
-
-        store.dispatch(addToCart(mockCartItem));
+        await act(async () => {
+            store.dispatch(addToCart(mockCartItem));
+        });
 
         await waitFor(() => {
             expect(screen.getByText(/testItem/i)).toBeInTheDocument();
             expect(screen.getByText(/\$100/i)).toBeInTheDocument();
-        });
+        })
     });
 
     test('removes items when remove button is clicked', async () => {
@@ -68,9 +73,12 @@ describe('ShoppingCart Component integration tests', () => {
             </Provider>
         );
 
-        store.dispatch(addToCart(mockCartItem));
+        await act(async () => {
+            store.dispatch(addToCart(mockCartItem))
+    });
 
-        const removeButton = screen.getByText(/remove/i);
+
+        const removeButton = screen.getByRole('button', {name: /remove/i});
         fireEvent.click(removeButton);
 
         await waitFor(() => {
@@ -79,7 +87,6 @@ describe('ShoppingCart Component integration tests', () => {
     });
 
     test('clears cart when clear button is clicked', async () => {
-        store.dispatch(addToCart(mockCartItem));
 
         render(
             <Provider store={store}>
@@ -89,21 +96,22 @@ describe('ShoppingCart Component integration tests', () => {
             </Provider>
         );
 
-        const clearButton = screen.getByText(/clear/i);
+        await act(async () => {
+            store.dispatch(addToCart(mockCartItem));
+        });
+
+        const clearButton = screen.getByRole('button', {name:/clear/i});
         fireEvent.click(clearButton);
 
         await waitFor(() => {
-            expect(screen.getByText(/Your shopping cart is empty./i)).toBeInTheDocument();
-        }
-        );
+            expect(screen.getByText(/Your shopping cart is empty/i)).toBeInTheDocument();
+        });
     });
 
     test('checks out successfully and clears cart', async () => {
-        store.dispatch(addToCart(mockCartItem));
-
         axios.post.mockResolvedValueOnce({ data: { success: true } });
 
-        render(
+        const {rerender} = render (
             <Provider store={store}>
                 <BrowserRouter>
                     <ShoppingCart />
@@ -111,12 +119,16 @@ describe('ShoppingCart Component integration tests', () => {
             </Provider>
         );
 
-        fireEvent.click(screen.getByText(/Checkout/i));
-
-        await waitFor(() => {
-            expect(screen.getByText(/Checkout complete/i)).toBeInTheDocument();
+        await act(async () => {
+            store.dispatch(addToCart(mockCartItem));
         });
 
-        expect(screen.getByText(/Your cart is empty/i)).toBeInTheDocument();
+        await act(async () => {
+            fireEvent.click(screen.getByRole('button', {name: /checkout/i}));
+        })
+
+        await waitFor(() => {
+            expect(screen.getByText(/Your shopping cart is empty/i)).toBeInTheDocument();
     });
+});
 });

@@ -35,7 +35,7 @@ const UpdateUser = () => {
 
     const fetchSingleUser = async () => {
         try {
-            const response = await axios.get(`'https://fakestoreapi.com/users/${id}'`)
+            const response = await axios.get(`https://fakestoreapi.com/users/${id}`)
             if (response && response.data) {
                 return response.data
             }
